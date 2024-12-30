@@ -23,7 +23,7 @@ First, a teacher model is trained, which is used to guide molecule generation to
 
         pip install E-GuARD
 
-# Usage
+# Usage (TO BE MODIFIED)
 
 Below are command examples to train a target property predictor then running the active learning workflow using a simulated expert to fine-tune it. Make sure to replace the provided paths with yours before running the command lines.
 In this example, the target property is DRD2 bioactivity.
@@ -47,9 +47,9 @@ Once you have a pre-trained predictor for your target property, you can use it t
 
         python -m hitl_al_gomg.run --seed 3 --rounds 4 --num_opt_steps 100 --path_to_output_dir results --path_to_reinvent_env /home/miniconda3/envs/reinvent-hitl --path_to_reinvent_repo /home/Test_my_code/Reinvent --task drd2 --path_to_scoring_model data/predictors/drd2 --path_to_simulator data/simulators/drd2 --model_type classification --scoring_component_name bioactivity --dirname demo_drd2 --path_to_train_data data/train/drd2_train --acquisition entropy --al_iterations 5 --n_queries 10 --noise 0.1
 
-# Data
+# Data (TO BE MODIFIED)
 
-We provide the four assay interference data sets for training the penalized LogP and DRD2 bioactivity predictors, as well as a sample from ChEMBL on which `REINVENT` prior agent was pre-trained.
+We provide the four assay interference data sets under ADD/FOLDER/LOCATION.
   
 # Notebooks
 
