@@ -47,13 +47,11 @@ Once you have a pre-trained predictor for your target property, you can use it t
 
 # Data
 
-- We provide data sets for training the penalized LogP and DRD2 bioactivity predictors, as well as a sample from ChEMBL on which `REINVENT` prior agent was pre-trained.
-- We also provide a copy of the pre-trained `REINVENT` prior agent in `data/priors/random.prior.new`.
-- The experimental simulators or oracles for DRD2 bioactivity and the hERG model described in the multi-objective generation use case can both be downloaded from [https://huggingface.co/yasminenahal/hitl-al-gomg-simulators/tree/main].
+We provide the four assay interference data sets for training the penalized LogP and DRD2 bioactivity predictors, as well as a sample from ChEMBL on which `REINVENT` prior agent was pre-trained.
   
 # Notebooks
 
-In `notebooks/`, we provide Jupyter notebooks with code to reproduce the paper's result figures for both simulation and real human experiments.
+In `notebooks/`, we provide Jupyter notebooks with code to reproduce the paper's result figures.
 
 # Acknowledgements
 
