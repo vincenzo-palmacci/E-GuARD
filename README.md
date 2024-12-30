@@ -49,9 +49,9 @@ Once you have a pre-trained predictor for your target property, you can use it t
 
         python -m hitl_al_gomg.run --seed 3 --rounds 4 --num_opt_steps 100 --path_to_output_dir results --path_to_reinvent_env /home/miniconda3/envs/reinvent-hitl --path_to_reinvent_repo /home/Test_my_code/Reinvent --task drd2 --path_to_scoring_model data/predictors/drd2 --path_to_simulator data/simulators/drd2 --model_type classification --scoring_component_name bioactivity --dirname demo_drd2 --path_to_train_data data/train/drd2_train --acquisition entropy --al_iterations 5 --n_queries 10 --noise 0.1
 
-# Data (TO BE MODIFIED)
+# Data
 
-We provide the four assay interference data sets under ADD/FOLDER/LOCATION.
+The four assay interference data sets used in this work; FI (`fluc.csv`), NI (`nluc.csv`), TR (`thiol.csv`) and RR (`redox.csv`) are available under `data/`.
   
 # Notebooks
 
