@@ -23,6 +23,8 @@ First, a teacher model is trained, which is used to guide molecule generation to
 
         pip install E-GuARD
 
+3. Install the molskill package separately by following the instructions provided [here](https://github.com/microsoft/molskill).
+
 # Usage (TO BE MODIFIED)
 
 Below are command examples to train a target property predictor then running the active learning workflow using a simulated expert to fine-tune it. Make sure to replace the provided paths with yours before running the command lines.
