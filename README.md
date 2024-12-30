@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14166168.svg)](https://doi.org/10.5281/zenodo.14166168)
+<[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14166168.svg)](https://doi.org/10.5281/zenodo.14166168)>
 
 E-GuARD: Expert-Guided Augmentation for Robust Interference Compound Detection
 ====================================================================================================
@@ -19,7 +19,7 @@ First, a teacher model is trained, which is used to guide molecule generation to
 1. Since this workflow is based on REINVENT 4, you need a working installation of REINVENT 4. Follow install instructions [here](https://github.com/MolecularAI/REINVENT4).
 2. Create a virtual environment with `python>=3.9` and activate it, then install the package with
 
-        pip install hitl-al-gomg
+        pip install E-GuARD
 
 # Usage
 
