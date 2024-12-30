@@ -8,7 +8,7 @@ setup(
     version="0.0.1",
     license="MIT",
     author="Vincenzo Palmacci",
-    author_email="vin.palmacci@gmail.com",
+    author_email="vincenzo.palmacci@univie.ac.at",
     description=" E-GuARD, a novel framework seeking to address data scarcity and imbalance by integrating self-distillation, active learning, and expert-guided molecular generation.",
     long_description=long_description,
     long_description_content_type="text/markdown",
