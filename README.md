@@ -23,7 +23,7 @@ First, a teacher model is trained, which is used to guide molecule generation to
 
         pip install E-GuARD
 
-3. Install the molskill package separately by following the instructions provided [here](https://github.com/microsoft/molskill).
+3. Install the `molskill` package separately by following the instructions provided [here](https://github.com/microsoft/molskill).
 
 # Usage (TO BE MODIFIED)
 
