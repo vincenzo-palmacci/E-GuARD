@@ -4,13 +4,18 @@ import os
 
 # TODO: solve this import: from FtF4.path import teacher
 
+
 @click.command()
-@click.option("-d", "--dataset", help="Specify the dataset to generate config file for.")
-@click.option("-s", "--sampling", help="Specify the sampling strategy {random, greedy, hintl}")
+@click.option(
+    "-d", "--dataset", help="Specify the dataset to generate config file for."
+)
+@click.option(
+    "-s", "--sampling", help="Specify the sampling strategy {random, greedy, hintl}"
+)
 @click.option("-v", "--version", help="Specify the version of the pipeline.")
 def generate_config(dataset, sampling, version):
     # Load the template toml file.
-    with open('configs/template.toml', 'r') as f:
+    with open("configs/template.toml", "r") as f:
         toml_string = f.read()
 
     parsed_toml = toml.loads(toml_string)
@@ -35,17 +40,21 @@ def generate_config(dataset, sampling, version):
         os.makedirs(chkpt_dir)
 
     # Rename the scaffold memory file.
-    parsed_toml["parameters"]["summary_csv_prefix"] = f"v{version}/{sampling}/{task}/{task}"
+    parsed_toml["parameters"][
+        "summary_csv_prefix"
+    ] = f"v{version}/{sampling}/{task}/{task}"
     # Rename the checkpoint file.
     parsed_toml["stage"][0]["chkpt_file"] = f"v{version}/{sampling}/{task}/{task}.chkpt"
 
     # Write the correct scoring model to be loaded.
-    model_dir = "/home2/vpalmacci/Projects/FTF4/FtF4/teacher/trained_models" # TODO: Change this using the path.py file.
+    model_dir = "/home2/vpalmacci/Projects/FTF4/FtF4/teacher/trained_models"  # TODO: Change this using the path.py file.
 
-    parsed_toml["stage"][0]["scoring"]["component"][0]["ExternalModel"]["endpoint"][0]["params"]["model_file"] = f"{model_dir}/{task}.pkl"
+    parsed_toml["stage"][0]["scoring"]["component"][0]["ExternalModel"]["endpoint"][0][
+        "params"
+    ]["model_file"] = f"{model_dir}/{task}.pkl"
 
     # Write the config file.
-    with open(f"{task_dir}/config.toml", 'w') as f:
+    with open(f"{task_dir}/config.toml", "w") as f:
         toml.dump(parsed_toml, f)
 
 

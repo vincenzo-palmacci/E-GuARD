@@ -31,7 +31,7 @@ def gram_rbf(x, threshold=1.0):
     sq_norms = np.diag(dot_products)
     sq_distances = -2 * dot_products + sq_norms[:, None] + sq_norms[None, :]
     sq_median_distance = np.median(sq_distances)
-    return np.exp(-sq_distances / (2 * threshold**2 * sq_median_distance))
+    return np.exp(-sq_distances / (2 * threshold ** 2 * sq_median_distance))
 
 
 def center_gram(gram, unbiased=False):
@@ -154,7 +154,7 @@ def feature_space_linear_cka(features_x, features_y, debiased=False):
         )
         normalization_x = np.sqrt(
             _debiased_dot_product_similarity_helper(
-                normalization_x**2,
+                normalization_x ** 2,
                 sum_squared_rows_x,
                 sum_squared_rows_x,
                 squared_norm_x,
@@ -164,7 +164,7 @@ def feature_space_linear_cka(features_x, features_y, debiased=False):
         )
         normalization_y = np.sqrt(
             _debiased_dot_product_similarity_helper(
-                normalization_y**2,
+                normalization_y ** 2,
                 sum_squared_rows_y,
                 sum_squared_rows_y,
                 squared_norm_y,

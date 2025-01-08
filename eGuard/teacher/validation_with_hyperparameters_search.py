@@ -16,10 +16,11 @@ from rdkit.Chem import AllChem, DataStructs
 
 # Ignoring warnings for cleaner output
 import warnings
+
 warnings.filterwarnings("ignore")
 
 # Disable rdkit logger
-RDLogger.DisableLog('rdApp.*')
+RDLogger.DisableLog("rdApp.*")
 
 """
 Random Forest Classifier: Validation with hyperparameters search.
@@ -28,18 +29,20 @@ Random Forest Classifier: Validation with hyperparameters search.
 # Seeding
 np.random.seed(13)
 
+
 def _compute_morgan(smile, radius):
     """
     Function to compute morgan fingerprints for a list of smiles.
     """
     molecule = Chem.MolFromSmiles(smile)
     fp_object = AllChem.GetMorganFingerprintAsBitVect(molecule, radius, nBits=2048)
-    morgan_fp = np.zeros((0, ))
+    morgan_fp = np.zeros((0,))
     DataStructs.ConvertToNumpyArray(fp_object, morgan_fp)
-    
+
     return morgan_fp
 
-def _suggest_hyperparameters(trial:optuna.trial.Trial) -> list:
+
+def _suggest_hyperparameters(trial: optuna.trial.Trial) -> list:
     """
     Suggest hyperparameters for optuna search.
     """
@@ -56,7 +59,7 @@ def _suggest_hyperparameters(trial:optuna.trial.Trial) -> list:
     return trial.params
 
 
-def objective(trial:optuna.trial.Trial, X, y) -> float:
+def objective(trial: optuna.trial.Trial, X, y) -> float:
     """
     Search for optimal set of hyperparameters via cross validation.
         n_folds = 5
@@ -69,20 +72,23 @@ def objective(trial:optuna.trial.Trial, X, y) -> float:
     cv = StratifiedKFold(n_splits=5)
 
     scores = []
-    for train_idx, test_idx, in cv.split(X, y):
+    for (
+        train_idx,
+        test_idx,
+    ) in cv.split(X, y):
         # Get training and validation sets.
         X_train, y_train = X[train_idx], y[train_idx]
         X_test, y_test = X[test_idx], y[test_idx]
 
         # Instanciate the random forest classifier with the suggested hyperparameters.
         model = BalancedRandomForestClassifier(
-                    n_estimators = hyperparameters["n_estimators"],
-                    max_depth = hyperparameters["max_depth"],
-                    min_samples_split = hyperparameters["min_samples_split"],
-                    max_features = hyperparameters["max_features"],
-                    bootstrap = True,
-                    n_jobs = 32,
-                    )
+            n_estimators=hyperparameters["n_estimators"],
+            max_depth=hyperparameters["max_depth"],
+            min_samples_split=hyperparameters["min_samples_split"],
+            max_features=hyperparameters["max_features"],
+            bootstrap=True,
+            n_jobs=32,
+        )
 
         # Fit training data.
         model.fit(X_train, y_train)
@@ -94,8 +100,14 @@ def objective(trial:optuna.trial.Trial, X, y) -> float:
 
     return np.mean(scores)
 
+
 @click.command()
-@click.option("-d", "--dataset", required=True, help="Specify the dataset {fluc, nluc, redox, thiol}")
+@click.option(
+    "-d",
+    "--dataset",
+    required=True,
+    help="Specify the dataset {fluc, nluc, redox, thiol}",
+)
 def Main(dataset):
     """
     Random Forest Classifier: validation with hyperparameters search.
@@ -103,12 +115,14 @@ def Main(dataset):
     # Load data.
     print("\n Loading data ...")
     data = pd.read_csv(f"data/train/{dataset}")
-    smiles = data["smiles"].values # get samples
+    smiles = data["smiles"].values  # get samples
     # Get labels.
     labels = data["label"].values.astype(int)
 
     # Compute molecules descriptors.
-    fingerprints = np.array([_compute_morgan(i, radius=3) for i in tqdm(smiles)], dtype=float)
+    fingerprints = np.array(
+        [_compute_morgan(i, radius=3) for i in tqdm(smiles)], dtype=float
+    )
 
     print("\nDataset specs: ")
     print("\t# Compound:", fingerprints.shape[0])
@@ -116,7 +130,12 @@ def Main(dataset):
 
     # Run hyperparameters search with optuna.
     study_name = "_".join([dataset, "optuna_run"])
-    study = optuna.create_study(study_name=study_name, direction="maximize", pruner=optuna.pruners.HyperbandPruner(), sampler=optuna.samplers.TPESampler())
+    study = optuna.create_study(
+        study_name=study_name,
+        direction="maximize",
+        pruner=optuna.pruners.HyperbandPruner(),
+        sampler=optuna.samplers.TPESampler(),
+    )
     study.optimize(lambda trial: objective(trial, fingerprints, labels), n_trials=50)
 
     best_trial = study.best_trial.params
@@ -125,8 +144,10 @@ def Main(dataset):
     dataname = dataset.split(".")[0]
     if not os.path.exists("eGuard/teacher/hyperparameters"):
         os.makedirs("eGuard/teacher/hyperparameters")
-    np.save(os.path.join("eGuard/teacher/hyperparameters", f"{dataname}.npy"), best_trial)
+    np.save(
+        os.path.join("eGuard/teacher/hyperparameters", f"{dataname}.npy"), best_trial
+    )
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     Main()

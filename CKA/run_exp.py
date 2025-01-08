@@ -38,7 +38,7 @@ def get_gram_from_path(path, features):
 
 
 def main():
-    base_path = Path('/data/shared/vin+mat/20241023') / "trained_replicates"
+    base_path = Path("/data/shared/vin+mat/20241023") / "trained_replicates"
     comparision_teacher = pd.DataFrame(
         {
             "dataset": [],

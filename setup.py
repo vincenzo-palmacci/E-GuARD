@@ -15,12 +15,12 @@ setup(
     url="https://github.com/vincenzo-palmacci/E-GuARD.git",
     keywords=["ASSAY_INTERFERENCE", "SELF_DISTILLATION", "EXPERT_INPUT"],
     packages=find_packages(),
-    #package_data={
+    # package_data={
     #    "eGuard": [
     #        "models/priors/random.prior.new",
     #        "scoring/chemspace/chembl.csv",
     #    ]
-    #},
+    # },
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -28,7 +28,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.9",
-    #install_requires=[
+    # install_requires=[
     #    "PyTDC==1.0.7",
     #    "scipy==1.10.1",
     #    "torch==1.12.1",
@@ -36,5 +36,5 @@ setup(
     #    "click==8.1.7",
     #    "matplotlib==3.9.2",
     #    "jupyter==1.1.1",
-    #],
+    # ],
 )

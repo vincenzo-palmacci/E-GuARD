@@ -10,23 +10,20 @@ def get_ticks(data_min, data_max, n_spaces):
     delta = data_max - data_min
     return [data_min + i * delta / n_spaces for i in range(n_spaces + 1)]
 
-palette = ["#808080", "#ee82ee", "#FFA500",  "#7741f7", "#805380"]
+
+palette = ["#808080", "#ee82ee", "#FFA500", "#7741f7", "#805380"]
 sampling = ["random", "greedy", "epig", "greedyskill", "epigskill"]
-dataset_name_lookup = {
-    'thiol': 'TR', 
-    'redox': 'RR', 
-    'fluc':'FI', 
-    'nluc': 'NI'
-}
+dataset_name_lookup = {"thiol": "TR", "redox": "RR", "fluc": "FI", "nluc": "NI"}
 sampling_name_look_up = {
-    "random": 'Random',
-    "greedy": 'Greedy',
-    "epig": 'EPIG',
-    "greedyskill": 'GreedySkill',
-    "epigskill": 'EPIGSkill'
+    "random": "Random",
+    "greedy": "Greedy",
+    "epig": "EPIG",
+    "greedyskill": "GreedySkill",
+    "epigskill": "EPIGSkill",
 }
 
 COLOR_DICT = {samp: col for samp, col in zip(sampling, palette)}
+
 
 def main():
     time = "2024-10-25_09:06:37"
@@ -70,8 +67,7 @@ def main():
                 x="iteration",
                 y="cka_rf_to_teacher",
                 ax=ax,
-                color="black"
-                
+                color="black",
             )
             sns.lineplot(
                 seeds.query(
@@ -80,10 +76,10 @@ def main():
                 x="iteration",
                 y="inter_replica_cka_rf",
                 ax=ax,
-                linestyle='dashed',
-                color="black"
+                linestyle="dashed",
+                color="black",
             )
-            
+
             if j == 0:
                 ax.set_ylabel(f"{dataset_name_lookup[dataset]}", fontsize=fontsize)
             else:
@@ -109,8 +105,8 @@ def main():
             ax.set_xticks(x_ticks)
     for n, ax in enumerate(axs.flat):
         ax.text(
-            -0.20, # -0.15
-            1.03, # 1.03
+            -0.20,  # -0.15
+            1.03,  # 1.03
             "(" + string.ascii_lowercase[n] + ")",
             transform=ax.transAxes,  #
             size=fontsize - 5,
@@ -128,9 +124,9 @@ def main():
         fancybox=False,
         shadow=False,
         ncol=2,
-        fontsize=fontsize
+        fontsize=fontsize,
     )
-    for i in range(16,21,1):
+    for i in range(16, 21, 1):
         ax = axs.flat[i - 1]
         ax.set_xlabel("Iteration")
     plt.tight_layout()

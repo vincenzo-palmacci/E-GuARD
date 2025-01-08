@@ -6,9 +6,7 @@ from numpy import stack
 
 # Functions originally implemented by Bickford Smith et al. (2023) https://github.com/fbickfordsmith/epig
 def conditional_epig_from_probs(
-    probs_pool: torch.Tensor, 
-    probs_targ: torch.Tensor,
-    batch_size: int = 100
+    probs_pool: torch.Tensor, probs_targ: torch.Tensor, batch_size: int = 100
 ) -> torch.Tensor:
     """
     See conditional_epig_from_logprobs.
@@ -32,14 +30,18 @@ def conditional_epig_from_probs(
     for i in range(0, N_p, batch_size):
         for j in range(0, N_t, batch_size):
             # Get the batch
-            probs_pool_batch = probs_pool[i:i + batch_size]
-            probs_targ_batch = probs_targ[j:j + batch_size]
+            probs_pool_batch = probs_pool[i : i + batch_size]
+            probs_targ_batch = probs_targ[j : j + batch_size]
 
             # Estimate the joint predictive distribution.
             probs_pool_batch = probs_pool_batch.permute(1, 0, 2)  # [K, batch_size, Cl]
             probs_targ_batch = probs_targ_batch.permute(1, 0, 2)  # [K, batch_size, Cl]
-            probs_pool_batch = probs_pool_batch[:, :, None, :, None]  # [K, batch_size, 1, Cl, 1]
-            probs_targ_batch = probs_targ_batch[:, None, :, None, :]  # [K, 1, batch_size, 1, Cl]
+            probs_pool_batch = probs_pool_batch[
+                :, :, None, :, None
+            ]  # [K, batch_size, 1, Cl, 1]
+            probs_targ_batch = probs_targ_batch[
+                :, None, :, None, :
+            ]  # [K, 1, batch_size, 1, Cl]
             probs_pool_targ_joint = probs_pool_batch * probs_targ_batch
             probs_pool_targ_joint = torch.mean(probs_pool_targ_joint, dim=0)
 
@@ -57,15 +59,18 @@ def conditional_epig_from_probs(
             log_term[nonzero_joint] = torch.log(probs_pool_targ_joint[nonzero_joint])
             log_term[nonzero_joint] -= torch.log(probs_pool_targ_indep[nonzero_joint])
             score_batch = torch.sum(probs_pool_targ_joint * log_term, dim=(-2, -1))
-            
+
             # Store the results
-            scores[i:i + batch_size, j:j + batch_size] = score_batch
+            scores[i : i + batch_size, j : j + batch_size] = score_batch
 
     return scores  # [N_p, N_t]
 
 
 def check(
-    scores: torch.Tensor, max_value: float = math.inf, epsilon: float = 1e-6, score_type: str = ""
+    scores: torch.Tensor,
+    max_value: float = math.inf,
+    epsilon: float = 1e-6,
+    score_type: str = "",
 ) -> torch.Tensor:
     """
     Warn if any element of scores is negative, a nan or exceeds max_value.
@@ -75,10 +80,13 @@ def check(
     if not torch.all((scores + epsilon >= 0) & (scores - epsilon <= max_value)):
         min_score = torch.min(scores).item()
         max_score = torch.max(scores).item()
-        
-        logging.warning(f"Invalid {score_type} score (min = {min_score}, max = {max_score})")
-    
+
+        logging.warning(
+            f"Invalid {score_type} score (min = {min_score}, max = {max_score})"
+        )
+
     return scores
+
 
 def epig_from_conditional_scores(scores: torch.Tensor) -> torch.Tensor:
     """
@@ -91,6 +99,7 @@ def epig_from_conditional_scores(scores: torch.Tensor) -> torch.Tensor:
     scores = torch.mean(scores, dim=-1)  # [N_p,]
     scores = check(scores, score_type="EPIG")  # [N_p,]
     return scores  # [N_p,]
+
 
 def epig_from_probs(probs_pool: torch.Tensor, probs_targ: torch.Tensor) -> torch.Tensor:
     """
@@ -106,8 +115,9 @@ def epig_from_probs(probs_pool: torch.Tensor, probs_targ: torch.Tensor) -> torch
     scores = conditional_epig_from_probs(probs_pool, probs_targ)  # [N_p, N_t]
     return epig_from_conditional_scores(scores)  # [N_p,]
 
+
 def get_prob_distribution(model, x):
     prob_dist = [estimator.predict_proba(x) for estimator in model.estimators_]
-    prob_dist = stack(prob_dist, axis = 1)
+    prob_dist = stack(prob_dist, axis=1)
     prob_dist = torch.tensor(prob_dist)
     return prob_dist
