@@ -30,7 +30,7 @@ warnings.filterwarnings("ignore")
 Random Forest Classifier: Validation with hyperparameters search.
 """
 # Global variables:
-datadir = "../data/test/"
+datadir = "data/test/"
 outdir = "results/predictions/"
 
 # Seeding
