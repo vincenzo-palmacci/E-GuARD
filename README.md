@@ -29,12 +29,14 @@ Assay interference by small organic compounds poses significant challenges in ea
 
 2. **Create a virtual Python >= 3.10 environment**
    Clone this repository, navigate to its location and install the pip dependencies as follows
-   ```pip install -r requirements.txt
+   ```bash
+   pip install -r requirements.txt
    ```
 
 3. **Install MolSkill**  
    Activate the new environment and install [MolSkill](https://github.com/microsoft/molskill) as follows
-   ```conda install molskill -c msr-ai4science -c conda-forge
+   ```bash
+   conda install molskill -c msr-ai4science -c conda-forge
    ```
 
 <!---
