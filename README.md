@@ -1,7 +1,7 @@
 # **E-GuARD**  
 ### *Expert-Guided Augmentation for Robust Interference Compound Detection*  
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14166168.svg)](https://doi.org/10.5281/zenodo.14166168)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14166168.svg)](https://doi.org/10.5281/zenodo.14166168) **THIS NEEDS TO BE CHANGED WITH THIS CODE'S DOI**
 
 ---
 
@@ -27,15 +27,23 @@ Assay interference by small organic compounds poses significant challenges in ea
 1. **Install REINVENT 4**  
    E-GuARD builds on REINVENT 4. Follow its [installation guide](https://github.com/MolecularAI/REINVENT4).  
 
-2. **Install MolSkill**  
-   To unlock the expert-guided acquisition functionality, install **MolSkill**. Follow its [installation guide](https://github.com/microsoft/molskill).  
+2. **Create a virtual Python >= 3.10 environment**
+   Clone this repository, navigate to its location and install the pip dependencies as follows
+   ```pip install -r requirements.txt
+   ```
 
-3. **Activate the REINVENT Environment**  
+3. **Install MolSkill**  
+   Activate the new environment and install [MolSkill](https://github.com/microsoft/molskill) as follows
+   ```conda install molskill -c msr-ai4science -c conda-forge
+   ```
+
+<!---
+4. **Activate the REINVENT Environment**  
    Once REINVENT 4 is installed, activate its environment:  
    ```bash
    conda activate reinvent4
    ```  
-
+--->
 ---
 
 ## **Usage**  
