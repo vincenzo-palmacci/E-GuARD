@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import click
-import os.path as osp
+import os
 import pickle
 
 # Importing required libraries for machine learning
@@ -12,8 +12,6 @@ from imblearn.ensemble import BalancedRandomForestClassifier
 from rdkit import Chem
 from rdkit import RDLogger
 from rdkit.Chem import AllChem, DataStructs
-
-from FtF4.path import training
 
 # Ignoring warnings for cleaner output
 import warnings
@@ -46,7 +44,7 @@ def Main(dataset):
     # Load data.
     print("\n Loading data ...")
     dataname = dataset.split(".")[0]
-    data = pd.read_csv(f"/home/vpalmacci/Projects/FTF4/data/train/{dataset}")
+    data = pd.read_csv(f"data/train/{dataset}")
     smiles = data["smiles"].values # get samples
     # Get labels.
     labels = data["label"].values
@@ -61,7 +59,7 @@ def Main(dataset):
     X, y = fingerprints, labels
 
     # Get suggested hyperparameters.
-    hyperparameters = np.load(osp.join(f"results/validation/{dataname}.npy"), allow_pickle=True)[()]
+    hyperparameters = np.load(os.path.join(f"eGuard/teacher/hyperparameters/{dataname}.npy"), allow_pickle=True)[()]
 
     # Instanciate the random forest classifier with the suggested hyperparameters.
     print(hyperparameters)
@@ -79,7 +77,9 @@ def Main(dataset):
     model.fit(X, y)
 
     # Save trained model.
-    with open(f"trained_models/{dataname}.pkl", "wb") as f:
+    if not os.path.exists("eGuard/teacher/trained_models"):
+        os.makedirs("eGuard/teacher/trained_models")
+    with open(f"eGuard/teacher/trained_models/{dataname}.pkl", "wb") as f:
         pickle.dump(model, f)
 
     return print("Model saved")

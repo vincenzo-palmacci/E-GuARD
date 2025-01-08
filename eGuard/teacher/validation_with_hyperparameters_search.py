@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import click
-import os.path as osp
+import os
 
 from imblearn.ensemble import BalancedRandomForestClassifier
 from sklearn.model_selection import StratifiedKFold
@@ -13,8 +13,6 @@ import optuna
 from rdkit import Chem
 from rdkit import RDLogger
 from rdkit.Chem import AllChem, DataStructs
-
-from FtF4.path import training
 
 # Ignoring warnings for cleaner output
 import warnings
@@ -97,15 +95,14 @@ def objective(trial:optuna.trial.Trial, X, y) -> float:
     return np.mean(scores)
 
 @click.command()
-@click.option("-d", "--dataset", required=True, help="Specify the dataset {fluc, nluc, redox, thiol, fluo_blue, fluo_green}")
+@click.option("-d", "--dataset", required=True, help="Specify the dataset {fluc, nluc, redox, thiol}")
 def Main(dataset):
     """
     Random Forest Classifier: validation with hyperparameters search.
     """
     # Load data.
     print("\n Loading data ...")
-    print(training)
-    data = pd.read_csv(f"/home/vpalmacci/Projects/FTF4/data/train/{dataset}")
+    data = pd.read_csv(f"data/train/{dataset}")
     smiles = data["smiles"].values # get samples
     # Get labels.
     labels = data["label"].values.astype(int)
@@ -126,7 +123,9 @@ def Main(dataset):
 
     # Save best hyperparameters.
     dataname = dataset.split(".")[0]
-    np.save(osp.join("results/validation", f"{dataname}.npy"), best_trial)
+    if not os.path.exists("eGuard/teacher/hyperparameters"):
+        os.makedirs("eGuard/teacher/hyperparameters")
+    np.save(os.path.join("eGuard/teacher/hyperparameters", f"{dataname}.npy"), best_trial)
 
 
 if __name__=="__main__":

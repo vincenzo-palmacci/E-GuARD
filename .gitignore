@@ -46,6 +46,7 @@ REINVENT4/
 
 # Trained models
 */*/trained_models/
+*/results
 
 # Environment file
 environment.yml

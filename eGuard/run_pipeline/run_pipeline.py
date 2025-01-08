@@ -38,7 +38,7 @@ def molskill_scoring(task, sampling, version):
     Run the molskill scoring script and return the output
     """
 
-    molskill_scorer = "/home/vpalmacci/Projects/FTF4/FtF4/RUN_MOLSKILL/score_smiles.py" # Path to the molskill scoring script
+    molskill_scorer = "eGuard/run_molskill/score_smiles.py" # Path to the molskill scoring script
 
     command = f"conda run -n molskill python {molskill_scorer} {task} {sampling} {version}"
     result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
@@ -172,7 +172,7 @@ def Main(sampling, dataset, iteration, version):
     # generated_fps = [] # List to store the generated fingerprints at each iteration
     print("Loading training data...")
     task = dataset.split(".")[0]
-    training_data = pd.read_csv(f"/home/vpalmacci/Projects/FTF4/data/train/{task}.csv")
+    training_data = pd.read_csv(f"data/train/{task}.csv")
 
     training_smiles = training_data["smiles"].values
     training_labels = training_data["label"].values.tolist()
@@ -214,7 +214,7 @@ def Main(sampling, dataset, iteration, version):
         # Load the trained model
         print("Retraining the model...")
         if iter == 0:
-            model_path = f"/home/vpalmacci/Projects/FTF4/FtF4/teacher/trained_models/{task}.pkl"
+            model_path = f"eGuard/teacher/trained_models/{task}.pkl"
         else:
             model_path = f"/home/vpalmacci/Projects/FTF4/FtF4/RUN_REINVENT/v{version}/{sampling}/{task}/{task}_{iter}.pkl"
         
@@ -223,7 +223,7 @@ def Main(sampling, dataset, iteration, version):
         
         # Retrain the model
         # Get suggested hyperparameters.
-        hyperparameters = np.load(f"/home/vpalmacci/Projects/FTF4/FtF4/teacher/results/validation/{task}.npy", allow_pickle=True)[()]
+        hyperparameters = np.load(f"eGuard/teacher/hyperparameters/{task}.npy", allow_pickle=True)[()]
 
         # Instanciate the random forest classifier with the suggested hyperparameters.
         print(hyperparameters)
@@ -256,7 +256,7 @@ def Main(sampling, dataset, iteration, version):
         # Update the agent file.
         parsed_toml["parameters"]["agent_file"] = f"/home/vpalmacci/Projects/FTF4/FtF4/RUN_REINVENT/v{version}/{sampling}/{task}/{task}.chkpt"
         # Update the scoring model to be loaded.
-        parsed_toml["stage"][0]["scoring"]["component"][0]["ExternalModel"]["endpoint"][0]["params"]["model_file"] = f"/home/vpalmacci/Projects/FTF4/FtF4/RUN_REINVENT/v{version}/{sampling}/{task}/{task}_{iter+1}.pkl"
+        parsed_toml["stage"][0]["scoring"]["component"][0]["ExternalModel"]["endpoint"][0]["params"]["model_file"] = f"/home/vpalmacci/Projects/FTF4/FtF4/RUN_REINVENT/v{version}/{sampling}/{task}/{task}_{iter+1}.pkl" ###ADD THIS FOLDER
 
         # Write the updated config file.
         with open(f"/home/vpalmacci/Projects/FTF4/FtF4/RUN_REINVENT/v{version}/{sampling}/{task}/config.toml", 'w') as f:
