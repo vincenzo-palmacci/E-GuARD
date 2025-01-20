@@ -29,6 +29,9 @@ Random Forest Classifier: Validation with hyperparameters search.
 # Seeding
 np.random.seed(13)
 
+# Directories
+datadir = "../../data"
+
 
 def _compute_morgan(smile, radius):
     """
@@ -102,19 +105,20 @@ def objective(trial: optuna.trial.Trial, X, y) -> float:
 
 
 @click.command()
-@click.option(
-    "-d",
-    "--dataset",
-    required=True,
-    help="Specify the dataset {fluc, nluc, redox, thiol}",
-)
-def Main(dataset):
+@click.option("-s", "--source", required=False, help="Specify the source {alves, polaris}", type=str)
+@click.option("-d", "--dataset", required=True, help="Specify the dataset {fluc, nluc, redox, thiol}", type=str)
+def Main(source, dataset):
     """
     Random Forest Classifier: validation with hyperparameters search.
     """
     # Load data.
     print("\n Loading data ...")
-    data = pd.read_csv(f"data/train/{dataset}")
+    dataname = dataset.split(".")[0]
+    
+    if not source:
+        source = "alves"
+    
+    data = pd.read_csv(f"{datadir}/{source}/train/{dataname}.csv")
     smiles = data["smiles"].values  # get samples
     # Get labels.
     labels = data["label"].values.astype(int)
@@ -141,12 +145,10 @@ def Main(dataset):
     best_trial = study.best_trial.params
 
     # Save best hyperparameters.
-    dataname = dataset.split(".")[0]
-    if not os.path.exists("eGuard/teacher/hyperparameters"):
-        os.makedirs("eGuard/teacher/hyperparameters")
-    np.save(
-        os.path.join("eGuard/teacher/hyperparameters", f"{dataname}.npy"), best_trial
-    )
+    if not os.path.exists("hyperparameters"):
+        os.makedirs("hyperparameters")
+
+    np.save(os.path.join("hyperparameters", f"{dataname}.npy"), best_trial)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@
 
 Assay interference by small organic compounds poses significant challenges in early drug discovery. Existing computational methods often fall short due to data scarcity and imbalance, limiting their predictive power. **E-GuARD** introduces a novel framework that combines **self-distillation**, **active learning**, and **generative models** to tackle these challenges effectively and robustly.  
 
-![E-GuARD Workflow Overview](figures/E-GUARD.jpg)  
+![E-GuARD Workflow Overview](E-GUARD.jpg)  
 *Figure: Overview of E-GuARD. Outer loop (black arrows) for molecule generation and inner loop (dashed red arrows) for iterative updates through self-distillation.*
 
 ---

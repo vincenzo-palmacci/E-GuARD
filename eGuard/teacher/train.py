@@ -25,6 +25,11 @@ RDLogger.DisableLog("rdApp.*")
 Random Forest Classifier: Train models.
 """
 
+# Seeding
+np.random.seed(13)
+
+# Directories
+datadir = "../../data"
 
 def _compute_morgan(smile, radius):
     """
@@ -39,20 +44,20 @@ def _compute_morgan(smile, radius):
 
 
 @click.command()
-@click.option(
-    "-d",
-    "--dataset",
-    required=True,
-    help="Specify the dataset {fluc, nluc, redox, thiol}",
-)
-def Main(dataset):
+@click.option("-s", "--source", required=False, help="Specify the source {alves, polaris}", type=str)
+@click.option("-d", "--dataset", required=True, help="Specify the dataset {fluc, nluc, redox, thiol}", type=str)
+def Main(source, dataset):
     """
     Random Forest Classifier: Train models.
     """
     # Load data.
     print("\n Loading data ...")
     dataname = dataset.split(".")[0]
-    data = pd.read_csv(f"data/train/{dataset}")
+
+    if not source:
+        source = "alves"
+    
+    data = pd.read_csv(f"{datadir}/{source}/train/{dataname}.csv")
     smiles = data["smiles"].values  # get samples
     # Get labels.
     labels = data["label"].values
@@ -70,7 +75,7 @@ def Main(dataset):
 
     # Get suggested hyperparameters.
     hyperparameters = np.load(
-        os.path.join(f"eGuard/teacher/hyperparameters/{dataname}.npy"),
+        os.path.join(f"hyperparameters/{dataname}.npy"),
         allow_pickle=True,
     )[()]
 
@@ -90,9 +95,9 @@ def Main(dataset):
     model.fit(X, y)
 
     # Save trained model.
-    if not os.path.exists("eGuard/teacher/trained_models"):
-        os.makedirs("eGuard/teacher/trained_models")
-    with open(f"eGuard/teacher/trained_models/{dataname}.pkl", "wb") as f:
+    if not os.path.exists("trained_models"):
+        os.makedirs("trained_models")
+    with open(f"trained_models/{dataname}.pkl", "wb") as f:
         pickle.dump(model, f)
 
     return print("Model saved")

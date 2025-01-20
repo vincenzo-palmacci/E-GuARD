@@ -38,15 +38,14 @@ pip-delete-this-directory.txt
 .ipynb_checkpoints
 
 # Large files
-data/
-*/to_refactor
 
 # Reinvent files
 REINVENT4/
 
 # Trained models
 */*/trained_models/
-*/results
+*/run_pipeline/lighthning_logs/
+*/run_pipeline/trial
 
 # Environment file
 environment.yml

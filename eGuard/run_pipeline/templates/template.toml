@@ -1,0 +1,99 @@
+# Curriculum learning in REINVENT4 is a multi-stage reinforcement learning
+# run.  One or more stages (auto CL) can be defined.  But it is also
+# possible to continue a run from any checkpoint file that is generated
+# during the run (manual CL).  Currently checkpoints are written at the end
+# of a run also when the run is forcefully terminated with Ctrl-C.
+
+
+run_type = "staged_learning"
+device = "cuda:0" 
+tb_logdir = "test/teacher_logs"
+
+[parameters]
+
+# Uncomment one of the comment blocks below.  Each generator needs a model
+# file and possibly a SMILES file with seed structures.  If the run is to
+# be continued after termination, the agent_file would have to be replaced
+# with the checkpoint file.
+
+summary_csv_prefix = "test/staged_learning"  # prefix for the CSV file
+use_checkpoint = true  # if true read diversity filter from agent_file
+purge_memories = false  # if true purge all diversity filter memories after each stage
+
+## Reinvent
+prior_file = "/home/vpalmacci/Projects/FTF4/REINVENT4/priors/reinvent.prior"
+agent_file = "/home/vpalmacci/Projects/FTF4/REINVENT4/priors/reinvent.prior"
+
+batch_size = 64          # network
+
+unique_sequences = true  # if true remove all duplicates raw sequences in each step
+                         # only here for backward compatibility
+randomize_smiles = true  # if true shuffle atoms in SMILES randomly
+
+
+[learning_strategy]
+
+type = "dap"      # dap: only one supported
+sigma = 128       # sigma of the RL reward function
+rate = 0.0001     # for torch.optim
+
+
+#[diversity_filter]  # optional, comment section out or remove if unneeded
+                    # NOTE: also memorizes all seen SMILES
+
+#type = "IdenticalMurckoScaffold" # IdenticalTopologicalScaffold,
+                                 # ScaffoldSimilarity, PenalizeSameSmiles
+#bucket_size = 25                 # memory size in number of compounds
+#minscore = 0.4                   # only memorize if this threshold is exceeded
+#minsimilarity = 0.4              # minimum similarity for ScaffoldSimilarity
+#penalty_multiplier = 0.5         # penalty factor for PenalizeSameSmiles
+
+
+# Reinvent only: guide RL in the initial phase
+#[inception]  # optional, comment sectionout or remove if unneeded
+
+#smiles_file = "sampled.smi"  # "good" SMILES for guidance
+#memory_size = 100  # number of total SMILES held in memory
+#sample_size = 10  # number of SMILES randomly chosen each epoch
+
+
+### Stage 1
+### Note that stages must always be a list i.e. double brackets
+[[stage]]
+
+chkpt_file = 'test/teacher.chkpt'  # name of the checkpoint file, can be reused as agent
+
+termination = "simple"  # termination criterion fot this stage
+max_score = 1.0  # terminate if this total score is exceeded
+min_steps = 25  # run for at least this number of steps
+max_steps = 250  # terminate entire run when exceeded
+
+[stage.scoring]
+type = "geometric_mean"  # aggregation function
+
+[[stage.scoring.component]]
+[stage.scoring.component.ExternalModel]
+
+[[stage.scoring.component.ExternalModel.endpoint]]
+name = "interference"  # user chosen name for output
+weight = 0.8  # weight to fine-tune the relevance of this component
+
+# Parameters of the component
+params.model_file = "../teacher/trained_models/fluc.pkl"
+
+[[stage.scoring.component]]
+[stage.scoring.component.MolecularWeight]
+
+[[stage.scoring.component.MolecularWeight.endpoint]]
+name = "Molecular weight"  # user chosen name for output
+weight = 0.2  # weight to fine-tune the relevance of this component
+
+# A transform ensures that the output from the scoring component ranges
+# from 0 to 1 to serve as a proper score.  Here we use a double sigmoid
+# to transform weights into the range 200-500 a.u.
+transform.type = "double_sigmoid"
+transform.high = 600.0
+transform.low = 200.0
+transform.coef_div = 600.0
+transform.coef_si = 20.0
+transform.coef_se = 20.0

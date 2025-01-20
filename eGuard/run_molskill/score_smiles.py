@@ -35,13 +35,14 @@ def Main(task, sampling, version):
     # Load the data.
     print("Loading data...")
     reinvent_memory = pd.read_csv(
-        f"/home/vpalmacci/Projects/FTF4/FtF4/RUN_REINVENT/v{version}/{sampling}/{task}/{task}_1.csv"
+        f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{sampling}/{task}/{task}_1.csv"
     )
 
     print("Standardizing data...")
     # Generate standardized SMILES and collect interference scores.
     reinvent_memory["SMILES"] = reinvent_memory["SMILES"].apply(preprocess)
     reinvent_memory.dropna(inplace=True)
+    print("Standardization complete.")
 
     # Score the SMILES.
     print("Scoring data...")
@@ -56,7 +57,7 @@ def Main(task, sampling, version):
 
     # Save the data.
     reinvent_memory.to_csv(
-        f"/home/vpalmacci/Projects/FTF4/FtF4/RUN_REINVENT/v{version}/{sampling}/{task}.csv",
+        f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{sampling}/{task}.csv",
         index=False,
     )
     # clen torch cache
@@ -69,6 +70,6 @@ if __name__ == "__main__":
     # Specify arguments.
     task = sys.argv[1]
     sampling = sys.argv[2]
-    version = int(sys.argv[3])
+    version = sys.argv[3]
     # Run the main function.
     Main(task, sampling, version)
