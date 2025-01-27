@@ -1,7 +1,7 @@
 # **E-GuARD**  
 ### *Expert-Guided Augmentation for Robust Interference Compound Detection*  
 
-![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14750016.svg)](https://doi.org/10.5281/zenodo.14750016)
+![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14750016.svg)
 
 ---
 
