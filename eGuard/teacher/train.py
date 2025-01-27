@@ -31,6 +31,7 @@ np.random.seed(13)
 # Directories
 datadir = "../../data"
 
+
 def _compute_morgan(smile, radius):
     """
     Function to compute morgan fingerprints for a list of smiles.
@@ -44,8 +45,20 @@ def _compute_morgan(smile, radius):
 
 
 @click.command()
-@click.option("-s", "--source", required=False, help="Specify the source {alves, polaris}", type=str)
-@click.option("-d", "--dataset", required=True, help="Specify the dataset {fluc, nluc, redox, thiol}", type=str)
+@click.option(
+    "-s",
+    "--source",
+    required=False,
+    help="Specify the source {alves, polaris}",
+    type=str,
+)
+@click.option(
+    "-d",
+    "--dataset",
+    required=True,
+    help="Specify the dataset {fluc, nluc, redox, thiol}",
+    type=str,
+)
 def Main(source, dataset):
     """
     Random Forest Classifier: Train models.
@@ -56,7 +69,7 @@ def Main(source, dataset):
 
     if not source:
         source = "alves"
-    
+
     data = pd.read_csv(f"{datadir}/{source}/train/{dataname}.csv")
     smiles = data["smiles"].values  # get samples
     # Get labels.

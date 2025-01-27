@@ -5,7 +5,11 @@ import os
 
 @click.command()
 @click.option("-d", "--dataset", help="Specify the dataset to generate config file for")
-@click.option("-a", "--acquisition", help="Specify the acquisition strategy {random, greedy, epig, greedyskill, epigskill}")
+@click.option(
+    "-a",
+    "--acquisition",
+    help="Specify the acquisition strategy {random, greedy, epig, greedyskill, epigskill}",
+)
 @click.option("-v", "--version", help="Specify the version of the pipeline")
 def generate_config(dataset, acquisition, version):
     # Load the template toml file.
@@ -38,12 +42,16 @@ def generate_config(dataset, acquisition, version):
         "summary_csv_prefix"
     ] = f"{version}/{acquisition}/{task}/{task}"
     # Rename the checkpoint file.
-    parsed_toml["stage"][0]["chkpt_file"] = f"{version}/{acquisition}/{task}/{task}.chkpt"
+    parsed_toml["stage"][0][
+        "chkpt_file"
+    ] = f"{version}/{acquisition}/{task}/{task}.chkpt"
 
     # Write the correct scoring model to be loaded.
     model_dir = "/home2/vpalmacci/Projects/E-GuARD/eGuard/teacher/trained_models"
 
-    parsed_toml["stage"][0]["scoring"]["component"][0]["ExternalModel"]["endpoint"][0]["params"]["model_file"] = f"{model_dir}/{task}.pkl"
+    parsed_toml["stage"][0]["scoring"]["component"][0]["ExternalModel"]["endpoint"][0][
+        "params"
+    ]["model_file"] = f"{model_dir}/{task}.pkl"
 
     # Write the config file.
     with open(f"{task_dir}/config.toml", "w") as f:

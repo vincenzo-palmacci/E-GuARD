@@ -84,7 +84,9 @@ def compute_prob_distributions_for_epig(
     # Compute Morgan FPs for all molecules in the generated pool (scaffold memory)
     fps_pool = [compute_morgan(s, 3) for s in scored_molecules["SMILES"].tolist()]
     # Define a subset of target molecules on which we want to improve the model e.g., the top 1000 high-scored molecules
-    target_molecules = scored_molecules.sort_values("interference", ascending=False).head(target_subset_size)
+    target_molecules = scored_molecules.sort_values(
+        "interference", ascending=False
+    ).head(target_subset_size)
     # Compute Morgan FPs for the target molecules
     fps_target = [compute_morgan(s, 3) for s in target_molecules["SMILES"].tolist()]
     # Get all probability distributions from the model estimators (trees)
@@ -104,18 +106,26 @@ def acquire_molecules(model, task, acquisition, version):
 
     def compute_epig(model, scored_molecules, selection_size):
         # Get predicted probability distributions from the model estimators (trees)
-        probs_pool, probs_target = compute_prob_distributions_for_epig(model, scored_molecules)
+        probs_pool, probs_target = compute_prob_distributions_for_epig(
+            model, scored_molecules
+        )
         # Calculate the epig scores from the probability distributions
-        scored_molecules["epig_score"] = epig_from_probs(probs_pool, probs_target).tolist()
+        scored_molecules["epig_score"] = epig_from_probs(
+            probs_pool, probs_target
+        ).tolist()
         # Sort the molecules by the epig score and take the top 500
-        scored_molecules = scored_molecules.sort_values("epig_score", ascending=False).head(selection_size)
+        scored_molecules = scored_molecules.sort_values(
+            "epig_score", ascending=False
+        ).head(selection_size)
 
         return scored_molecules
 
     if "skill" not in acquisition:
         print("Acquiring molecules...")
         # Read reinvent scaffold memory
-        scored_molecules = pd.read_csv(f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/{task}_1.csv")
+        scored_molecules = pd.read_csv(
+            f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/{task}_1.csv"
+        )
         # Preprocess the generated smiles
         scored_molecules["SMILES"] = scored_molecules["SMILES"].apply(preprocess)
         scored_molecules.dropna(inplace=True)
@@ -126,7 +136,9 @@ def acquire_molecules(model, task, acquisition, version):
 
         elif acquisition == "greedy":
             # Sort the molecules by the interference score and take the top 250
-            scored_molecules = scored_molecules.sort_values("interference", ascending=False).head(250)
+            scored_molecules = scored_molecules.sort_values(
+                "interference", ascending=False
+            ).head(250)
 
         elif acquisition == "epig":
             # Compute the EPIG score
@@ -145,21 +157,31 @@ def acquire_molecules(model, task, acquisition, version):
             acquire_molecules(task, acquisition, version)
 
         # Read the script output
-        scored_molecules = pd.read_csv(f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}.csv")
+        scored_molecules = pd.read_csv(
+            f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}.csv"
+        )
 
         if acquisition == "greedyskill":
             # Consider only molecuels with negative molskill score
             # Sort the molecules by the molskill score and take the top 250
             # scored_molecules["combined"] = scored_molecules["interference"].sort_va * scored_molecules["molskill"]
-            scored_molecules = scored_molecules.sort_values("interference", ascending=False).head(500)
-            scored_molecules = scored_molecules.sort_values("molskill", ascending=True).head(250)
+            scored_molecules = scored_molecules.sort_values(
+                "interference", ascending=False
+            ).head(500)
+            scored_molecules = scored_molecules.sort_values(
+                "molskill", ascending=True
+            ).head(250)
 
         elif acquisition == "epigskill":
             # Compute the EPIG score
             scored_molecules = compute_epig(model, scored_molecules, selection_size=500)
             # scored_molecules["combined"] = scored_molecules["epig_score"] * scored_molecules["molskill"]
-            scored_molecules = scored_molecules.sort_values("epig_score", ascending=False).head(500)
-            scored_molecules = scored_molecules.sort_values("molskill", ascending=True).head(250)
+            scored_molecules = scored_molecules.sort_values(
+                "epig_score", ascending=False
+            ).head(500)
+            scored_molecules = scored_molecules.sort_values(
+                "molskill", ascending=True
+            ).head(250)
 
         print("Molecules scored! Just read the csv!")
 
@@ -170,10 +192,25 @@ def acquire_molecules(model, task, acquisition, version):
 
 
 @click.command()
-@click.option("-s", "--source", required=False, help="Specify the source {alves, polaris}")
-@click.option("-d", "--dataset", required=True, help="Specify the task {fluc, nluc, redox, thiol}")
-@click.option("-i", "--iteration", type=int,required=True, help="Specify the numbe of iterations to run")
-@click.option("-a", "--acquisition", required=True, help="Specify the acquisition strategy {random, greedy, epig, greedyskill, epigskill}")
+@click.option(
+    "-s", "--source", required=False, help="Specify the source {alves, polaris}"
+)
+@click.option(
+    "-d", "--dataset", required=True, help="Specify the task {fluc, nluc, redox, thiol}"
+)
+@click.option(
+    "-i",
+    "--iteration",
+    type=int,
+    required=True,
+    help="Specify the numbe of iterations to run",
+)
+@click.option(
+    "-a",
+    "--acquisition",
+    required=True,
+    help="Specify the acquisition strategy {random, greedy, epig, greedyskill, epigskill}",
+)
 @click.option("-v", "--version", required=True, help="Specify the version")
 def Main(source, acquisition, dataset, iteration, version):
     """
@@ -202,7 +239,9 @@ def Main(source, acquisition, dataset, iteration, version):
             toml_string = f.read()
 
         parsed_toml = toml.loads(toml_string)
-        model_file = parsed_toml["stage"][0]["scoring"]["component"][0]["ExternalModel"]["endpoint"][0]["params"]["model_file"]
+        model_file = parsed_toml["stage"][0]["scoring"]["component"][0][
+            "ExternalModel"
+        ]["endpoint"][0]["params"]["model_file"]
         with open(model_file, "rb") as f:
             trained_model = pickle.load(f)
         ### Step 1 and Step 2 are combined in the acquire_molecules function and avoid faiilures.
@@ -211,7 +250,10 @@ def Main(source, acquisition, dataset, iteration, version):
         scored_molecules = acquire_molecules(trained_model, task, acquisition, version)
 
         # Save the molecules selected for retraining
-        scored_molecules.to_csv(f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/selected_{iter+1}.csv", index=False)
+        scored_molecules.to_csv(
+            f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/selected_{iter+1}.csv",
+            index=False,
+        )
 
         processed_smiles = scored_molecules["SMILES"].values
         generated_fps = [compute_morgan(smi, 3) for smi in tqdm(processed_smiles)]
@@ -241,7 +283,9 @@ def Main(source, acquisition, dataset, iteration, version):
 
         # Retrain the model
         # Get suggested hyperparameters.
-        hyperparameters = np.load(f"../teacher/hyperparameters/{task}.npy", allow_pickle=True)[()]
+        hyperparameters = np.load(
+            f"../teacher/hyperparameters/{task}.npy", allow_pickle=True
+        )[()]
 
         # Instanciate the random forest classifier with the suggested hyperparameters.
         print(hyperparameters)
@@ -275,19 +319,29 @@ def Main(source, acquisition, dataset, iteration, version):
         parsed_toml = toml.loads(toml_string)
 
         # Update the agent file.
-        parsed_toml["parameters"]["agent_file"] = f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/{task}.chkpt"
+        parsed_toml["parameters"][
+            "agent_file"
+        ] = f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/{task}.chkpt"
         # Update the scoring model to be loaded.
-        parsed_toml["stage"][0]["scoring"]["component"][0]["ExternalModel"]["endpoint"][0]["params"]["model_file"] = f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/{task}_{iter+1}.pkl"  ###ADD THIS FOLDER
+        parsed_toml["stage"][0]["scoring"]["component"][0]["ExternalModel"]["endpoint"][
+            0
+        ]["params"][
+            "model_file"
+        ] = f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/{task}_{iter+1}.pkl"  ###ADD THIS FOLDER
 
         # Write the updated config file.
         with open(
-            f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/config.toml", "w") as f:
+            f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/config.toml",
+            "w",
+        ) as f:
             toml.dump(parsed_toml, f)
 
         # Copy the checkpoint file to the correct location
         checkpoint_file = f"/home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/chkpt/{task}_{iter+1}.chkpt"
         command = f"cp /home/vpalmacci/Projects/E-GuARD/eGuard/run_pipeline/{version}/{acquisition}/{task}/{task}.chkpt {checkpoint_file}"
-        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        result = subprocess.run(
+            command, shell=True, check=True, capture_output=True, text=True
+        )
 
         print(f"Iteration {iter+1} completed!\n")
 

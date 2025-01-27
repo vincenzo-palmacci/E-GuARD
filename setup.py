@@ -13,7 +13,13 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/vincenzo-palmacci/E-GuARD.git",
-    keywords=["ASSAY_INTERFERENCE", "SELF_DISTILLATION", "EXPERT_INPUT", "ACTIVE_LEARNING", "HINTL"],
+    keywords=[
+        "ASSAY_INTERFERENCE",
+        "SELF_DISTILLATION",
+        "EXPERT_INPUT",
+        "ACTIVE_LEARNING",
+        "HINTL",
+    ],
     packages=find_packages(),
     # package_data={
     #    "eGuard": [

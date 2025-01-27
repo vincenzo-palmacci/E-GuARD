@@ -4,6 +4,7 @@ import math
 
 from numpy import stack
 
+
 # Functions originally implemented by Bickford Smith et al. (2023) https://github.com/fbickfordsmith/epig
 def conditional_epig_from_probs(
     probs_pool: torch.Tensor, probs_targ: torch.Tensor, batch_size: int = 100

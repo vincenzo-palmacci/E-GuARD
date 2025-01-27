@@ -105,8 +105,20 @@ def objective(trial: optuna.trial.Trial, X, y) -> float:
 
 
 @click.command()
-@click.option("-s", "--source", required=False, help="Specify the source {alves, polaris}", type=str)
-@click.option("-d", "--dataset", required=True, help="Specify the dataset {fluc, nluc, redox, thiol}", type=str)
+@click.option(
+    "-s",
+    "--source",
+    required=False,
+    help="Specify the source {alves, polaris}",
+    type=str,
+)
+@click.option(
+    "-d",
+    "--dataset",
+    required=True,
+    help="Specify the dataset {fluc, nluc, redox, thiol}",
+    type=str,
+)
 def Main(source, dataset):
     """
     Random Forest Classifier: validation with hyperparameters search.
@@ -114,10 +126,10 @@ def Main(source, dataset):
     # Load data.
     print("\n Loading data ...")
     dataname = dataset.split(".")[0]
-    
+
     if not source:
         source = "alves"
-    
+
     data = pd.read_csv(f"{datadir}/{source}/train/{dataname}.csv")
     smiles = data["smiles"].values  # get samples
     # Get labels.

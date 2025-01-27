@@ -24,7 +24,7 @@ def fetch_polaris_benchmarks():
 
         # Load and split the data
         train, test = data.get_train_test_split()
-        
+
         train_df = pd.DataFrame([train.inputs, train.targets.astype(int)]).T
         train_df.columns = ["smiles", "label"]
 
