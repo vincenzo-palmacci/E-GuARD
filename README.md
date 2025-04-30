@@ -1,7 +1,7 @@
 # **E-GuARD**  
 ### *Expert-Guided Augmentation for Robust Interference Compound Detection*  
 
-[![DOI](https://doi.org/10.1186/s13321-025-01014-3)]
+[![DOI](https://img.shields.io/badge/DOI-10.1186%2Fs13321--025--01014--3-blue)](https://doi.org/10.1186/s13321-025-01014-3)
 
 ---
 
